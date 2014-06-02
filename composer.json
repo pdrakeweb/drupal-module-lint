@@ -25,7 +25,6 @@
     "post-install-cmd": [
       "drush -y pm-download coder --destination=$HOME/.drush",
       "drush -y cache-clear drush",
-      "src/bin/dmlint"
     ]
   }
 }
