@@ -36,8 +36,12 @@ echo -e "\n\nRunning PHP Lint:"
 find ./ \( -iname \*.module -o -iname \*.inc -o -iname \*.install -o -iname \*.test -o -iname \*.engine \) -exec php -l '{}' \;
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
-echo -e "\n\nRunning PHP CodeSniffer:"
-phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extensions=module,info,inc,php,install,engine,test,profile
+echo -e "\n\nRunning PHP CodeSniffer Code Standards:"
+phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extensions=module,info,lib,inc,php,install,engine,test,profile
+if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+
+echo -e "\n\nRunning PHP CodeSniffer Security Audit:"
+phpcs  ./ --standard=$VENDOR_PATH/pdrakeweb/phpcs-security-audit/example_drupal7_ruleset.xml --extensions=module,lib,info,inc,php,install,engine,test,profile
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP Mess Detect:"
@@ -45,7 +49,7 @@ phpmd ./ text codesize --suffixes module,info,inc,php,install,engine,test,profil
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP Copy-Paste Detect:"
-phpcpd --names *.module,*.inc,*.php,*.install,*.engine,*.test ./
+phpcpd --names *.module,*.lib,*.inc,*.php,*.install,*.engine,*.test ./
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 
