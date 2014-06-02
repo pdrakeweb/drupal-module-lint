@@ -7,6 +7,9 @@ VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
 RESULT=0
 export PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
 
+drush -y pm-download coder --destination=$HOME/.drush
+drush -y cache-clear drush
+
 echo -e "\n\nRunning PHP Lint:"
 find ./ \( -iname \*.module -o -iname \*.inc -o -iname \*.install -o -iname \*.test -o -iname \*.engine \) -exec php -l '{}' \;
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
