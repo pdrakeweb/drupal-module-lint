@@ -7,7 +7,7 @@ VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
 RESULT=0
 export PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
 
-drush -y pm-download coder --destination=$HOME/.drush
+cp -Rf $VENDOR_PATH/drupal/coder ~/.drush
 drush -y cache-clear drush
 
 echo -e "\n\nRunning PHP Lint:"
