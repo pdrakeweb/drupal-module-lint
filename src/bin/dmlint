@@ -1,11 +1,33 @@
 #!/bin/bash
 
+RUN_UPGRADE_CHECK=1
 DRUPAL_INFO_VER=`grep -m 1 core *.info | cut -d ' ' -f3 | cut -b1`
 DRUPAL_MAJOR_VER=`if test -f info.yml; then echo '8'; elif [[ "$DRUPAL_INFO_VER" ]]; then echo $DRUPAL_INFO_VER; else echo '7'; fi`
 DRUSH_VER=`if [ "$DRUPAL_MAJOR_VER" -eq "8" ]; then echo "dev-master"; else echo "6.*"; fi`
 VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
 RESULT=0
 export PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
+
+while getopts ":hu" opt; do
+  case $opt in
+    h)
+      echo "Usage:"
+      echo "  dmlist [options]"
+      echo
+      echo "Options:"
+      echo "  -u Disable the coder upgrade checks."
+      echo "  -h Display help."
+      exit 0
+      ;;
+    u)
+      RUN_UPGRADE_CHECK=0
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
 
 cp -Rf $VENDOR_PATH/drupal/coder ~/.drush
 drush -y cache-clear drush
@@ -27,7 +49,7 @@ phpcpd --names *.module,*.inc,*.php,*.install,*.engine,*.test ./
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 
-if [ $DRUPAL_MAJOR_VER -gt 6 ]; then 
+if [ $RUN_UPGRADE_CHECK -eq 1 ] && [ $DRUPAL_MAJOR_VER -gt 6 ]; then
   echo -e "\n\nRunning Coder Upgrade Checks:"
   drush coder-review --upgrade$[DRUPAL_MAJOR_VER]x ./
   if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
