@@ -4,13 +4,13 @@
   "version": "7.0.0",
   "authors": [
       {
-          "name": "Sebastian Bergmann",
-          "email": "sebastian@phpunit.de",
+          "name": "Peter Drake",
+          "email": "pdrake@gmail.com",
           "role": "lead"
       }
   ],
   "bin": [
-    "phpcpd"
+    "src/bin/dmlint"
   ],
   "require": {
       "php": ">=5.3"
