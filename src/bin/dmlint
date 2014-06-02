@@ -1,0 +1,33 @@
+#!/bin/bash
+
+DRUPAL_INFO_VER=`grep core traceview.info | cut -d ' ' -f3 | cut -b1`
+DRUPAL_MAJOR_VER=`if test -f info.yml; then echo '8'; elif [[ "$DRUPAL_INFO_VER" ]]; then echo $DRUPAL_INFO_VER; else echo '7'; fi`
+DRUSH_VER=`if [ "$DRUPAL_MAJOR_VER" -eq "8" ]; then echo "dev-master"; else echo "6.*"; fi`
+VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
+RESULT=0
+export PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
+
+echo -e "\n\nRunning PHP Lint:"
+find ./ \( -iname \*.module -o -iname \*.inc -o -iname \*.install -o -iname \*.test -o -iname \*.engine \) -exec php -l '{}' \;
+if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+
+echo -e "\n\nRunning PHP CodeSniffer:"
+phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extensions=module,info,inc,php,install,engine,test,profile
+if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+
+echo -e "\n\nRunning PHP Mess Detect:"
+phpmd ./ text codesize --suffixes module,info,inc,php,install,engine,test,profile
+if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+
+echo -e "\n\nRunning PHP Copy-Paste Detect:"
+phpcpd --names *.module,*.inc,*.php,*.install,*.engine,*.test ./
+if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+
+
+if [ $DRUPAL_MAJOR_VER -gt 6 ]; then 
+  echo -e "\n\nRunning Coder Upgrade Checks:"
+  drush coder-review --upgrade$[DRUPAL_MAJOR_VER]x ./
+  if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
+fi
+
+exit $RESULT
