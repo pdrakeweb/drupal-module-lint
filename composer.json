@@ -2,15 +2,18 @@
   "name": "pdrakeweb/drupal-module-lint",
   "description": "Drupal module lint checking.",
   "version": "7.0.0",
+  "authors": [
+      {
+          "name": "Sebastian Bergmann",
+          "email": "sebastian@phpunit.de",
+          "role": "lead"
+      }
+  ],
+  "bin": [
+    "phpcpd"
+  ],
   "require": {
-    "php": ">=5.3"
-  }, 
-  "autoload": {
-    "psr-0": {
-      "DrupalModuleLint": "src/"
-    }
-  },
-  "require": {
+      "php": ">=5.3"
       "drush/drush": "6.*",
       "drupal/coder": "7.*",
       "squizlabs/php_codesniffer": "1.5.*",
