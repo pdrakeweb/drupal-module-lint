@@ -1,5 +1,6 @@
 #!/bin/bash
 
+WARNING_SEVERITY=6
 RUN_UPGRADE_CHECK=1
 DRUPAL_INFO_VER=`grep -m 1 core *.info | cut -d ' ' -f3 | cut -b1`
 DRUPAL_MAJOR_VER=`if test -f info.yml; then echo '8'; elif [[ "$DRUPAL_INFO_VER" ]]; then echo $DRUPAL_INFO_VER; else echo '7'; fi`
@@ -8,7 +9,7 @@ VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
 RESULT=0
 PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
 
-while getopts ":hu" opt; do
+while getopts ":w:hu" opt; do
   case $opt in
     h)
       echo "Usage:"
@@ -16,11 +17,15 @@ while getopts ":hu" opt; do
       echo
       echo "Options:"
       echo "  -u Disable the coder upgrade checks."
+      echo "  -w PHP CodeSniffer warning severity level (defaults to 6)."
       echo "  -h Display help."
       exit 0
       ;;
     u)
       RUN_UPGRADE_CHECK=0
+      ;;
+    w)
+      WARNING_SEVERITY=$OPTARG
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -32,16 +37,19 @@ done
 cp -Rf $VENDOR_PATH/drupal/coder ~/.drush
 drush -y cache-clear drush
 
+cp -Rf $VENDOR_PATH/pdrakeweb/phpcs-security-audit/Security $VENDOR_PATH/squizlabs/php_codesniffer/CodeSniffer/Standards/
+phpcs --config-set installed_paths $VENDOR_PATH/pdrakeweb/phpcs-security-audit/Security,$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/
+
 echo -e "\n\nRunning PHP Lint:"
 find ./ \( -iname \*.module -o -iname \*.inc -o -iname \*.install -o -iname \*.test -o -iname \*.engine \) -exec php -l '{}' \;
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP CodeSniffer Code Standards:"
-phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extensions=module,info,lib,inc,php,install,engine,test,profile
+phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extensions=module,info,lib,inc,php,install,engine,test,profile --warning-severity=$WARNING_SEVERITY
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP CodeSniffer Security Audit:"
-phpcs  ./ --standard=$VENDOR_PATH/pdrakeweb/phpcs-security-audit/example_drupal7_ruleset.xml --extensions=module,lib,info,inc,php,install,engine,test,profile
+phpcs  ./ --standard=$VENDOR_PATH/pdrakeweb/phpcs-security-audit/example_drupal7_ruleset.xml --extensions=module,lib,info,inc,php,install,engine,test,profile --warning-severity=$WARNING_SEVERITY
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP Mess Detect:"
