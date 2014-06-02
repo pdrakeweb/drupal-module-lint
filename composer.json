@@ -24,7 +24,7 @@
   "scripts": {
     "post-install-cmd": [
       "drush -y pm-download coder --destination=$HOME/.drush",
-      "drush -y cache-clear drush",
+      "drush -y cache-clear drush"
     ]
   }
 }
