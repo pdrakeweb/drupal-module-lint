@@ -34,10 +34,10 @@ while getopts ":w:hu" opt; do
   esac
 done
 
-cp -Rf $VENDOR_PATH/drupal/coder ~/.drush
+test -e ~/.drush/coder || ln -s $VENDOR_PATH/drupal/coder ~/.drush
 drush -y cache-clear drush
 
-cp -Rf $VENDOR_PATH/pdrakeweb/phpcs-security-audit/Security $VENDOR_PATH/squizlabs/php_codesniffer/CodeSniffer/Standards/
+test -e $VENDOR_PATH/squizlabs/php_codesniffer/CodeSniffer/Standards/Security || ln -s $VENDOR_PATH/pdrakeweb/phpcs-security-audit/Security $VENDOR_PATH/squizlabs/php_codesniffer/CodeSniffer/Standards
 phpcs --config-set installed_paths $VENDOR_PATH/pdrakeweb/phpcs-security-audit/Security,$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/
 
 echo -e "\n\nRunning PHP Lint:"
@@ -49,7 +49,7 @@ phpcs  ./ --standard=$VENDOR_PATH/drupal/coder/coder_sniffer/Drupal/ --extension
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP CodeSniffer Security Audit:"
-phpcs  ./ --standard=$VENDOR_PATH/pdrakeweb/phpcs-security-audit/example_drupal7_ruleset.xml --extensions=module,lib,info,inc,php,install,engine,test,profile --warning-severity=$WARNING_SEVERITY
+phpcs  ./ --standard=$VENDOR_PATH/pdrakeweb/phpcs-security-audit/example_drupal$[DRUPAL_MAJOR_VER]_ruleset.xml --extensions=module,lib,info,inc,php,install,engine,test,profile --warning-severity=$WARNING_SEVERITY
 if [ $? -ne 0 ]; then echo "failed"; RESULT=1; else echo "passed"; fi
 
 echo -e "\n\nRunning PHP Mess Detect:"
