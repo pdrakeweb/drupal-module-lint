@@ -6,7 +6,7 @@ DRUPAL_MAJOR_VER=`if test -f info.yml; then echo '8'; elif [[ "$DRUPAL_INFO_VER"
 DRUSH_VER=`if [ "$DRUPAL_MAJOR_VER" -eq "8" ]; then echo "dev-master"; else echo "6.*"; fi`
 VENDOR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../vendor"
 RESULT=0
-export PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
+PATH=$VENDOR_PATH/:$VENDOR_PATH/bin/:$PATH
 
 while getopts ":hu" opt; do
   case $opt in

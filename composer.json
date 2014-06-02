@@ -1,30 +1,30 @@
 {
-  "name": "pdrakeweb/drupal-module-lint",
-  "description": "Drupal module lint checking.",
-  "version": "7.0.0",
-  "authors": [
-      {
-          "name": "Peter Drake",
-          "email": "pdrake@gmail.com",
-          "role": "developer"
-      }
-  ],
-  "bin": [
-    "src/bin/dmlint"
-  ],
-  "require": {
-      "php": ">=5.3",
-      "drush/drush": "6.*",
-      "drupal/coder": "7.*",
-      "squizlabs/php_codesniffer": "1.5.*",
-      "pdepend/pdepend": "1.1.3",
-      "phpmd/phpmd": "1.5.*",
-      "sebastian/phpcpd": "1.4.*"
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "drush -y pm-download coder --destination=$HOME/.drush",
-      "drush -y cache-clear drush"
-    ]
-  }
+    "name": "pdrakeweb/drupal-module-lint",
+    "description": "Drupal module lint checking.",
+    "version": "7.0.0",
+    "authors": [
+        {
+            "name": "Peter Drake",
+            "email": "pdrake@gmail.com",
+            "role": "developer"
+        }
+    ],
+    "bin": [
+        "src/bin/dmlint"
+    ],
+    "require": {
+        "php": ">=5.3",
+        "drush/drush": "6.*",
+        "drupal/coder": "7.*",
+        "squizlabs/php_codesniffer": "1.5.*",
+        "pdepend/pdepend": "1.1.3",
+        "phpmd/phpmd": "1.5.*",
+        "sebastian/phpcpd": "1.4.*"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "drush -y pm-download coder --destination=$HOME/.drush",
+            "drush -y cache-clear drush"
+        ]
+    }
 }
