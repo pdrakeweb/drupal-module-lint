@@ -9,6 +9,7 @@
             "role": "developer"
         }
     ],
+    "minimum-stability": "dev",
     "bin": [
         "src/bin/dmlint"
     ],
