@@ -13,7 +13,7 @@
         "src/bin/dmlint"
     ],
     "require": {
-        "php": ">=5.3",
+        "php": ">=5.4",
         "drush/drush": "6.*",
         "drupal/coder": "7.*",
         "squizlabs/php_codesniffer": "1.5.*",
